@@ -1,0 +1,32 @@
+version: '2'
+services:
+  studio:
+    image: "datastax/dse-studio:latest"
+    environment:
+      - DS_LICENSE=accept
+    ports:
+      - 9091:9091
+
+  seed_node:
+    image: "datastax/dse-server:6.8.32"
+    command: "-s"
+    environment:
+      - DS_LICENSE=accept
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+  node:
+    image: "datastax/dse-server:6.8.32"
+    command: "-s"
+    environment:
+      - DS_LICENSE=accept
+      - SEEDS=seed_node
+    links:
+      - seed_node
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1      
