@@ -24,7 +24,7 @@ Kubernetes operator which handles the provisioning and management of K8ssandra c
 
 ## Notes:
 https://github.com/k8ssandra/cass-operator/issues/263
-
+ 
 ## Intall
 
 helm install k8ssandra-operator k8ssandra/k8ssandra-operator -n k8ssandra-operator -f values.yaml

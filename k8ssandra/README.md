@@ -40,3 +40,6 @@ spec:
 ```
 ## Test Scenarios
 https://github.com/k8ssandra/k8ssandra-operator/tree/main/test/testdata
+
+## CRD:
+https://github.com/k8ssandra/k8ssandra/blob/main/charts/cass-operator/crds/cassandradatacenters.yaml
