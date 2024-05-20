@@ -28,10 +28,14 @@ spec:
   superuserSecretName: demo-superuser
   config:
     cassandra-yaml:
-      num_tokens: 8
+      authenticator: com.datastax.bdp.cassandra.auth.DseAuthenticator    
+      authorizer: com.datastax.bdp.cassandra.auth.DseAuthorizer
+      role_manager: com.datastax.bdp.cassandra.auth.DseRoleManager
+      endpoint_snitch: GossipingPropertyFileSnitch
+      seed_provider:
+        - seeds: mixed-workload-seed-service,mixed-workload-dc1-additional-seed-service
       # DSE not using same authenticator as Apache Cassandra !
       # : DSE 6.8 is built on Apache Cassandra 3.11 but includes additional features and optimizations not present in the open-source version. These differences can lead to compatibility issues when trying to run a mixed cluster.
-      authenticator: PasswordAuthenticator
     jvm-server-options:
       initial_heap_size: 1G
       max_heap_size: 1G

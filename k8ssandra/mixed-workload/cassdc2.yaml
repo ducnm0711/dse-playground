@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-superuser
+  namespace: k8ssandra-dc2
+data:
+  password: dDBwLVNlY3JldA==
+  username: dGVzdC1zdXBlcnVzZXI=
+type: Opaque
+---
+apiVersion: cassandra.datastax.com/v1beta1
+kind: CassandraDatacenter
+metadata:
+  name: dc2
+  namespace: k8ssandra-dc2
+spec:
+  clusterName: mixed-workload
+  serverType: cassandra
+  serverVersion: 3.11.11
+  managementApiAuth:
+    insecure: {}
+  size: 1
+  storageConfig:
+    cassandraDataVolumeClaimSpec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  superuserSecretName: demo-superuser
+  config:
+    cassandra-yaml:
+      authenticator: org.apache.cassandra.auth.PasswordAuthenticator
+      authorizer: org.apache.cassandra.auth.CassandraAuthorizer
+      role_manager: org.apache.cassandra.auth.CassandraRoleManager
+      seed_provider:
+        - seeds: mixed-workload-dc1-all-pods-service.k8ssandra-dc1
+    jvm-options:
+      initial_heap_size: 800M
+      max_heap_size: 800M
