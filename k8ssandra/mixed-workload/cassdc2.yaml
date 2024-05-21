@@ -1,13 +1,13 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: demo-superuser
-  namespace: k8ssandra-dc2
-data:
-  password: dDBwLVNlY3JldA==
-  username: dGVzdC1zdXBlcnVzZXI=
-type: Opaque
----
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: demo-superuser
+#   namespace: k8ssandra-dc2
+# data:
+#   password: dDBwLVNlY3JldA==
+#   username: dGVzdC1zdXBlcnVzZXI=
+# type: Opaque
+# ---
 apiVersion: cassandra.datastax.com/v1beta1
 kind: CassandraDatacenter
 metadata:
