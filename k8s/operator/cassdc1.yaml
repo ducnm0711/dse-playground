@@ -39,12 +39,12 @@ spec:
         optional: false
         keystore: /crypto/keystore.jks
         keystore_password: keypass
-        require_client_auth: true
+        require_client_auth: false
         # Set trustore and truststore_password if require_client_auth is true
-        truststore: /crypto/truststore.jks
-        truststore_password: keypass
-        protocol: TLS
-        # cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA] # An earlier version of this manifest configured cipher suites but the proposed config was less secure. This section does not need to be modified.
+        # truststore: /crypto/truststore.jks
+        # truststore_password: keypass
+        # protocol: TLS
+        # cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA] # use all cipher_suites
       server_encryption_options:
         internode_encryption: all
         keystore: /crypto/keystore.jks
