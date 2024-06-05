@@ -1,0 +1,56 @@
+apiVersion: cassandra.datastax.com/v1beta1
+kind: CassandraDatacenter
+metadata:
+  name: dc1
+spec:
+  clusterName: cluster1
+  serverType: cassandra
+  serverVersion: 3.11.10
+  managementApiAuth:
+    insecure: {}
+  size: 3
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: "cassandra"
+          volumeMounts:
+          - name: certs
+            mountPath: "/crypto"
+      volumes:
+      - name: certs
+        secret:
+          secretName: cassandra-jks-keystore
+  storageConfig:
+    cassandraDataVolumeClaimSpec:
+      storageClassName: csi-cinder-high-speed
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  config:
+    cassandra-yaml:
+      authenticator: org.apache.cassandra.auth.AllowAllAuthenticator
+      authorizer: org.apache.cassandra.auth.AllowAllAuthorizer
+      role_manager: org.apache.cassandra.auth.CassandraRoleManager
+      client_encryption_options:
+        enabled: true
+        # If enabled and optional is set to true encrypted and unencrypted connections are handled.
+        optional: false
+        keystore: /crypto/keystore.jks
+        keystore_password: keypass
+        require_client_auth: true
+        # Set trustore and truststore_password if require_client_auth is true
+        truststore: /crypto/truststore.jks
+        truststore_password: keypass
+        protocol: TLS
+        # cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA] # An earlier version of this manifest configured cipher suites but the proposed config was less secure. This section does not need to be modified.
+      server_encryption_options:
+        internode_encryption: all
+        keystore: /crypto/keystore.jks
+        keystore_password: keypass
+        truststore: /crypto/truststore.jks
+        truststore_password: keypass
+    jvm-options:
+      initial_heap_size: 800M
+      max_heap_size: 800M

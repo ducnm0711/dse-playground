@@ -1,0 +1,50 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: cass-demo-ca-issuer
+  namespace: k8ssandra-operator
+spec:
+  ca:
+    secretName: cass-demo-ca
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keystore-pass
+  namespace: k8ssandra-operator
+type: Opaque
+data:
+  password: a2V5cGFzcw==
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cass-cert
+  namespace: k8ssandra-operator
+spec:
+  secretName: cassandra-jks-keystore
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  issuerRef:
+    name: cass-demo-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+  subject:
+    organizations:
+      - datastax
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  keystores:
+    jks:
+      create: true
+      passwordSecretRef:
+        name: keystore-pass
+        key: password
+  dnsNames:
+    - dc1.k8ssandra-operator.svc.cluster.local
