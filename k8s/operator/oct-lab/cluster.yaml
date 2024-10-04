@@ -1,0 +1,50 @@
+apiVersion: k8ssandra.io/v1alpha1
+kind: K8ssandraCluster
+metadata:
+  name: k8ssandra-cluster
+  namespace: dbs
+spec:
+  cassandra:
+    serverVersion: "4.0.14"
+    superuserSecretRef: 
+      name: cassandra-superuser      
+    datacenters:
+      - metadata:
+          name: dc1
+        size: 3
+        config:
+          cassandraYaml:
+            authenticator: PasswordAuthenticator
+            authorizer: CassandraAuthorizer
+            role_manager: CassandraRoleManager
+          jvmOptions:
+            heap_initial_size: 6G  # Sets Xms to 12GB
+            heap_max_size: 6G      # Sets Xmx to 12GB
+        racks:
+          - name: rack1
+            nodeAffinityLabels:
+              # nodepool: stg-dc1-application-nodepool
+              nodepool: stg-dc1-db-nodepool
+        initContainers:
+          - name: server-config-init
+            resources:
+              limits:
+                cpu: 1
+                memory: 1G
+              requests:
+                cpu: 1
+                memory: 1G
+        resources:
+          requests:
+            memory: "10Gi"
+            cpu: "200m"     # Set CPU request to 200m
+          limits:
+            memory: "10Gi"
+            cpu: "800m"    # Set CPU limit to 1200m
+        storageConfig:
+          cassandraDataVolumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce  # Set access mode for the PVC
+              resources:
+                requests:
+                  storage: 30Gi  # Set PVC size to 30Gi
